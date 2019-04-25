@@ -1,0 +1,9 @@
+en:
+  site_settings:
+    events_admin_plugin_enabled: "enable plugin?"
+    events_admin_plugin_api_key: "api key"
+    events_admin_plugin_api_user: "api key username"
+    events_admin_plugin_cat_bucket_id: "id of bucket category"
+    events_admin_plugin_cat_comingUp_id: "id of coming up category"
+    events_admin_plugin_cat_nowOn_id: "id of now on category"
+    events_admin_plugin_cat_finished_id: "id of finished category"

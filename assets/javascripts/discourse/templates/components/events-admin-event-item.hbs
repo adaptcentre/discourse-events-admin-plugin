@@ -1,0 +1,52 @@
+
+
+
+<!-- Wrapper -->
+<div class="events-admin-event-wrapper px-1">
+
+	<!-- Lock / unlock  -->
+	<div class="text-center pt-1">
+		{{#if event.linked_closed}}
+	  	{{d-icon 'lock'}}
+		{{ else }}
+	  	{{d-icon 'lock-open'}}
+		{{/if}}
+	</div>
+
+	<div class="text-center pb-1">
+	 {{event.startTime}} - {{event.endTime}}
+	</div>
+
+	<div class="text-center">
+		<h4>
+			{{event.title}}
+		</h4>
+  </div>
+
+  <div class="text-center">
+  	<h5>
+  		{{event.category}}
+  	</h5>
+	</div>
+
+	<div class="text-center pb-2">
+		<a target="_blank" href="{{event.urlLink}}">
+			Topic link
+		</a>
+	</div>
+
+	<div class="">
+		<h5>Move to</h5>
+
+		{{#each event.actions as |actionName| }}
+      <div style="margin-bottom: 0.3rem; margin-top: 0.3rem;">
+      	<button {{action "eventsAdminButtonClick" actionName}} type="button" class="events-admin-button">
+				{{actionName}}
+			</button>
+      </div>
+		{{/each}}
+	
+	</div>
+	
+</div>
+

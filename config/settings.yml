@@ -1,0 +1,22 @@
+plugins:
+  events_admin_plugin_enabled:
+    default: true
+    client: true
+  events_admin_plugin_api_key:
+    default: ''
+    client: true
+  events_admin_plugin_api_user:
+    default: ''
+    client: true
+  events_admin_plugin_cat_bucket_id:
+    default: ''
+    client: true
+  events_admin_plugin_cat_comingUp_id:
+    default: ''
+    client: true
+  events_admin_plugin_cat_nowOn_id:
+    default: ''
+    client: true
+  events_admin_plugin_cat_finished_id:
+    default: ''
+    client: true

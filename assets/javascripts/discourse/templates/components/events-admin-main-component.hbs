@@ -1,0 +1,81 @@
+
+<!-- CLOCK -->
+<div class="grid">
+	<div class="col">
+
+		<h1 class="text-center">
+			{{time}}
+		</h1>
+		
+	</div>
+</div>
+
+
+<!-- EVENTS -->
+<div class="grid">
+
+	<div class="col">
+		<div>
+			<h2>
+				Finished
+			</h2>
+
+			<div class="grid">
+				{{#each lists.finished as |event| }}
+		      <div class="col-12">
+		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
+		      </div>
+		    {{/each}}
+			</div>
+		</div>
+	</div>
+
+	<div class="col">
+		<div>
+			<h2>
+				Now on
+			</h2>
+
+			<div class="grid">
+				{{#each lists.nowOn as |event| }}
+		      <div class="col-12">
+		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
+		      </div>
+		    {{/each}}
+			</div>
+		</div>
+	</div>
+
+	<div class="col">
+		<div>
+			<h2>
+				Coming up
+			</h2>
+
+			<div class="grid">
+				{{#each lists.comingUp as |event| }}
+		      <div class="col-12">
+		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
+		      </div>
+		    {{/each}}
+			</div>
+		</div>
+	</div>
+
+	<div class="col">
+		<div>
+			<h2>
+				Bucket
+			</h2>
+
+			<div class="grid">
+				{{#each lists.bucket as |event| }}
+		      <div class="col-12">
+		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
+		      </div>
+		    {{/each}}
+			</div>
+		</div>
+	</div>
+
+</div>
