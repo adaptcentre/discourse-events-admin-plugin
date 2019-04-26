@@ -1,9 +1,9 @@
 
 <!-- CLOCK -->
-<div class="grid">
+<div class="grid pb-2">
 	<div class="col">
 
-		<h1 class="text-center">
+		<h1 class="text-center font-size-4">
 			{{time}}
 		</h1>
 		
@@ -22,7 +22,7 @@
 
 			<div class="grid">
 				{{#each finishedList as |event| }}
-		      <div class="col-12">
+					<div class="col-12">
 		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
 		      </div>
 		    {{/each}}
