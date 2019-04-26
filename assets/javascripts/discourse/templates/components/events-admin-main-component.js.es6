@@ -1,15 +1,8 @@
 export default Ember.Component.extend({
   
   init() {
-  	console.log('init');
+ 
   	this._super();
-
-  	this.lists = {
-  		bucket: [],
-  		comingUp: [],
-  		nowOn: [],
-  		finished: []
-  	}
 
   	this.catIds = {
   		bucket: this.siteSettings.events_admin_plugin_cat_bucket_id,
@@ -18,101 +11,106 @@ export default Ember.Component.extend({
   		finished: this.siteSettings.events_admin_plugin_cat_finished_id
   	}
 
+  	this.allEvents = [];
+
+  	Ember.defineProperty( this, 'bucketList', Ember.computed( 'allEvents.@each.category_id', () => {
+  		return this.allEvents.filter( (event) => {
+  			return parseInt(event.category_id) === parseInt(this.catIds['bucket']);
+  		});
+  	}));
+
+  	Ember.defineProperty( this, 'comingUpList', Ember.computed( 'allEvents.@each.category_id', () => {
+  		return this.allEvents.filter( (event) => {
+  			return parseInt(event.category_id) === parseInt(this.catIds['comingUp']);
+  		});
+  	}));
+
+  	Ember.defineProperty( this, 'nowOnList',Ember.computed( 'allEvents.@each.category_id', () => {
+  		return this.allEvents.filter( (event) => {
+  			return parseInt(event.category_id) === parseInt(this.catIds['nowOn']);
+  		});
+  	}));
+
+  	Ember.defineProperty( this, 'finishedList', Ember.computed( 'allEvents.@each.category_id', () => {
+  		return this.allEvents.filter( (event) => {
+  			return parseInt(event.category_id) === parseInt(this.catIds['finished']);
+  		});
+  	}));
+
   	let apiKey = this.siteSettings.events_admin_plugin_api_key;
     let apiKeyUser = this.siteSettings.events_admin_plugin_api_user;
 
     this.queryEndpoint = `?api_key=${apiKey}&api_username=${apiKeyUser}`;
-
 
     this.time = getTime();
     this.timeInterval = null;
   },
 
   didInsertElement() {
-    console.log('did insert');
 
-    let endpoint = this.queryEndpoint;
-    let id1 = this.catIds.bucket;
-    let id2 = this.catIds.comingUp;
-    let id3 = this.catIds.nowOn;
-    let id4 = this.catIds.finished;
-
-    //get topics from category 1
-    resolveCategory(id1, endpoint)
+    resolveCategory(this.catIds.bucket, this.queryEndpoint)
 	    .then( (topics1) => {
 
 	    	let list = topics1.map( (event) => {
 	    		let res = parseRawEvent(event); 
 	    		
-	    		res.actions = [];
-	    		res.actions.push('coming up');
-	    		res.actions.push('now on');
-	    		res.actions.push('finished');
+	    		res.actions = getEventActions('bucket');
 
 	    		return res;
 	    	});
 	    	
-	    	this.set('lists.bucket', list);
-
-	    	return resolveCategory(id2, endpoint);
+	    	this.set('allEvents', this.allEvents.concat(list) );
+	    	return resolveCategory(this.catIds.comingUp, this.queryEndpoint);
 	    })
 	    .then( (topics2) => {
 
 	    	let list = topics2.map( (event) => {
 	    		let res = parseRawEvent(event); 
 	    		
-	    		res.actions = [];
-	    		res.actions.push('bucket');
-	    		res.actions.push('now on');
-	    		res.actions.push('finished');
+	    		res.actions = getEventActions('coming up');
 
 	    		return res;
 	    	});
 
-	    	this.set('lists.comingUp', list);
-
-	    	return resolveCategory(id3, endpoint);
+	    	this.set('allEvents', this.allEvents.concat(list) );
+	    	return resolveCategory(this.catIds.nowOn, this.queryEndpoint);
 	    })
 	    .then( (topics3) => {
 
 	    	let list = topics3.map( (event) => {
 	    		let res = parseRawEvent(event); 
 	    		
-	    		res.actions = [];
-	    		res.actions.push('bucket');
-	    		res.actions.push('coming up');
-	    		res.actions.push('finished');
+	    		res.actions = getEventActions('now on');
 
 	    		return res;
 	    	});
 
-	    	this.set('lists.nowOn', list);
-
-	    	return resolveCategory(id4, endpoint);
+	    	
+	    	this.set('allEvents', this.allEvents.concat(list) );
+	    	return resolveCategory(this.catIds.finished, this.queryEndpoint);
 	    })
 	    .then( (topics4) => {
 
 	    	let list = topics4.map( (event) => {
 	    		let res = parseRawEvent(event); 
 	    		
-	    		res.actions = [];
-	    		res.actions.push('bucket');
-	    		res.actions.push('coming up');
-	    		res.actions.push('now on');
+	    		res.actions = getEventActions('finished');
 
 	    		return res;
 	    	});
 
-	    	this.set('lists.finished', list);
-
+	    	
+	    	this.set('allEvents', this.allEvents.concat(list) );
 	    	//now we need to check if the events aka topics are closed or open
-	    	return checkIfTopicsAreClosed( JSON.stringify( this.lists ), this.queryEndpoint );
+	    	return checkIfTopicsAreClosed( JSON.stringify( this.allEvents ), this.queryEndpoint );
 	    })
-	    .then( ( updatedLists ) => {
-		  	this.set('lists', updatedLists);
-		  	console.log('check if closed completed')
+	    .then( ( updatedEvents ) => {
+		  	
+		  	updatedEvents = updatedEvents.map( (el) => { el.loading = false; return el; } );
 
-		  	console.log(this.lists)
+		  	this.set('allEvents', updatedEvents);
+
+		  	console.log('check if closed completed');
 		  });
 
 	  //start interval for clock
@@ -144,9 +142,48 @@ export default Ember.Component.extend({
   },
 
   actions: {
-  	onButtonClickClick(actionName, event) {
-  		console.log( 'do something', actionName)
-  		console.log( 'do something', event)
+  	onButtonClickClick(actionName, eventClone) {
+ 	
+ 			let event = this.allEvents.find( (el) => {
+ 				return parseInt(el.id) === parseInt(eventClone.id);
+ 			});
+
+  		
+  		let newCatId = null;
+
+  		Ember.set(event, 'loading', true );
+
+  		if(actionName === 'bucket') {
+  			newCatId = this.catIds['bucket'];
+  		}
+
+  		if(actionName === 'coming up') {
+  			newCatId = this.catIds['comingUp'];
+  		}
+
+  		if(actionName === 'now on') {
+  			newCatId = this.catIds['nowOn'];
+  		}
+
+  		if(actionName === 'finished') {
+  			newCatId = this.catIds['finished'];
+  		}
+
+  		console.log('changing cat of event', event.id, 'to', newCatId);
+
+  		updateTopic(event.id, {category_id: newCatId}, this.queryEndpoint)
+  		.then( () => {
+
+  			addFadeOutAnimationToElement( event.id );
+  			
+  			setTimeout( () => {
+  				addFadeInAnimationToElement( event.id );
+  				
+  				Ember.set(event, 'actions', getEventActions(actionName) );
+  				Ember.set(event, 'category_id', parseInt(newCatId) );
+  				Ember.set(event, 'loading', false );
+  			}, 1000);
+  		});
   	}
   }
 });
@@ -250,26 +287,10 @@ function parseRawEvent( rawEvent ) {
 	
 	let title = rawEvent.fancy_title;
 
-	/*
-    Example title:
-    A Distinctive NUI Galway - Our distinctive location
-
-    Need to parse out first part
-
-    so: "A Distinctive NUI Galway - Our distinctive location" turns into "Our distinctive location"
-  */
-  
-  let tempIndex = title.indexOf('-');
-
-  if(tempIndex > 0) {
-    title = title.substring( tempIndex + 2 ); // +2 because there is a whitespace + - 
-  }
-
   let startTime = '';
   let endTime = '';
   let urlLink = '';
   let category = '';
-  let speakers = [];
   let bg_col = '';
   let linked_id = '';
 
@@ -300,13 +321,6 @@ function parseRawEvent( rawEvent ) {
       category = line.split('==')[1].trim()
     }
 
-    if (line.startsWith('Speakers==') || line.startsWith('speakers==')) {
-      speakers = line.split('==')[1].trim().split(',')
-      if (speakers.length === 1 && speakers[0] === '') {
-        speakers = [];
-      }
-    }
-
     if (line.startsWith('Cat-bg==') || line.startsWith('Cat-bg==')) {
       bg_col = line.split('==')[1].trim();
     }
@@ -314,12 +328,13 @@ function parseRawEvent( rawEvent ) {
 
 
   let parsed = {
+  	id: rawEvent.id,
+  	category_id: rawEvent.category_id,
   	title: title,
   	startTime: startTime,
   	endTime: endTime,
   	urlLink: urlLink,
   	category: category,
-  	speakers: speakers,
   	bg_col: bg_col,
   	linked_closed: null, //lets not assume anything and show a loading symbol untill we know more
   	linked_id: linked_id,
@@ -330,33 +345,14 @@ function parseRawEvent( rawEvent ) {
 	return parsed;
 }
 
-function checkIfTopicsAreClosed(lists, queryEndpoint) {
-	
-	lists = JSON.parse(lists);
+function checkIfTopicsAreClosed(events, queryEndpoint) {
 
-	let events = [];
-
-  lists.bucket.forEach( (event) => {
-  	events.push(event);
-  });
-  
-  lists.comingUp.forEach( (event) => {
-  	events.push(event);
-  });
-  
-  lists.nowOn.forEach( (event) => {
-  	events.push(event);
-  });
-  
-  lists.finished.forEach( (event) => {
-  	events.push(event);
-  });
+	events = JSON.parse(events);
 
   let tasks = [];
 
   let q = async.queue( (task, callback) => {
-	  console.log('Starting ' + task.linked_id);
-
+	 
 		fetch(`/t/${task.linked_id}.json${queryEndpoint}`)
 	    .then( (res) => {
 	 			
@@ -370,7 +366,6 @@ function checkIfTopicsAreClosed(lists, queryEndpoint) {
 
 	    	if(data) {
 	    		task.linked_closed = data.closed;
-	    		task.loading = false;
 	    	}
 	    	callback();
 	    });
@@ -378,8 +373,7 @@ function checkIfTopicsAreClosed(lists, queryEndpoint) {
 
 	let p = new Promise( (resolve, reject) => {
   	q.drain = function() {
-			console.log('all items have been processed');
-			resolve( lists );
+			resolve( events );
 		};
   })
 
@@ -389,3 +383,77 @@ function checkIfTopicsAreClosed(lists, queryEndpoint) {
     
   return p;  
 }
+
+function updateTopic(topicId, data, endpoint) {
+	
+	let p = new Promise( (resolve, reject) => {
+
+		fetch(`/t/-/${topicId}.json${endpoint}`, {
+			method: 'PUT',
+			headers: {
+	        'Content-Type': 'application/json'
+	    },
+			body: JSON.stringify(data)
+		})
+		.then( response => response.json() )
+		.then( (data) => { 
+			resolve()
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+	});
+
+	return p;
+}
+
+function getEventActions( listType ) {
+
+	let actions = [];
+
+	if(listType === 'bucket') {
+		actions.push('coming up');
+		actions.push('now on');
+	  actions.push('finished');
+	}
+
+	if(listType === 'coming up') {
+		actions.push('bucket');
+		actions.push('now on');
+	  actions.push('finished');
+	}
+
+	if(listType === 'now on') {
+		actions.push('bucket');
+	  actions.push('coming up');
+	  actions.push('finished');
+	}
+
+	if(listType === 'finished') {
+		actions.push('bucket');
+	  actions.push('coming up');
+	  actions.push('now on');
+	}
+
+	return actions;
+}
+
+
+function addFadeInAnimationToElement(elementId) {
+//events-admin-event-{{event.id}}
+	$('#events-admin-event-' + elementId).removeClass('fadeOut');
+	$('#events-admin-event-' + elementId).addClass('fadeIn');
+}
+
+function addFadeOutAnimationToElement(elementId) {
+//events-admin-event-{{event.id}}
+	$('#events-admin-event-' + elementId).removeClass('fadeIn');
+	$('#events-admin-event-' + elementId).addClass('fadeOut');
+}
+
+
+
+
+
+

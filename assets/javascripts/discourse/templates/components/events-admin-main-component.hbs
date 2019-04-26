@@ -16,12 +16,12 @@
 
 	<div class="col">
 		<div>
-			<h2>
+			<h2 class="text-center">
 				Finished
 			</h2>
 
 			<div class="grid">
-				{{#each lists.finished as |event| }}
+				{{#each finishedList as |event| }}
 		      <div class="col-12">
 		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
 		      </div>
@@ -32,12 +32,12 @@
 
 	<div class="col">
 		<div>
-			<h2>
+			<h2 class="text-center">
 				Now on
 			</h2>
 
 			<div class="grid">
-				{{#each lists.nowOn as |event| }}
+				{{#each nowOnList as |event| }}
 		      <div class="col-12">
 		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
 		      </div>
@@ -48,12 +48,12 @@
 
 	<div class="col">
 		<div>
-			<h2>
+			<h2 class="text-center">
 				Coming up
 			</h2>
 
 			<div class="grid">
-				{{#each lists.comingUp as |event| }}
+				{{#each comingUpList as |event| }}
 		      <div class="col-12">
 		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
 		      </div>
@@ -64,12 +64,12 @@
 
 	<div class="col">
 		<div>
-			<h2>
+			<h2 class="text-center">
 				Bucket
 			</h2>
 
 			<div class="grid">
-				{{#each lists.bucket as |event| }}
+				{{#each bucketList as |event| }}
 		      <div class="col-12">
 		      	{{events-admin-event-item event=event onButtonClick=(action "onButtonClickClick")}}
 		      </div>

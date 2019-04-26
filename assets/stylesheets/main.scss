@@ -126,6 +126,20 @@
 }
 
 
+.spin-spin {
+  animation: spin-spin 2s infinite linear;
+}
+
+@keyframes spin-spin{
+  0%{
+    transform:rotate(0deg)
+  } 
+  to
+  {
+    transform:rotate(1turn)
+  }
+}
+
 
 /* 
     ------------------------------
@@ -148,4 +162,24 @@
   text-decoration: none;
   display: block;
   width: 100%;
+}
+
+.events-admin-button:hover {  
+  background-color: #2A2A2A; /* Green */
+}
+
+.button-success {
+  background-color: #338a3e;
+}
+
+.button-success:hover {
+  background-color: #00600f;
+}
+
+.button-danger {
+  background-color: #d32f2f;
+}
+
+.button-danger:hover {
+  background-color: #9a0007;
 }

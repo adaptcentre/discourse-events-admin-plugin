@@ -2,51 +2,86 @@
 
 
 <!-- Wrapper -->
-<div class="events-admin-event-wrapper px-1">
+<div class="events-admin-event-wrapper px-1 animated fadeIn" id="events-admin-event-{{event.id}}" style="position: relative; overflow: hidden;">
 
-	<!-- Lock / unlock  -->
-	<div class="text-center pt-1">
-		{{#if event.linked_closed}}
-	  	{{d-icon 'lock'}}
-		{{ else }}
-	  	{{d-icon 'lock-open'}}
-		{{/if}}
-	</div>
-
-	<div class="text-center pb-1">
-	 {{event.startTime}} - {{event.endTime}}
-	</div>
-
-	<div class="text-center">
-		<h4>
-			{{event.title}}
-		</h4>
-  </div>
-
-  <div class="text-center">
-  	<h5>
-  		{{event.category}}
-  	</h5>
-	</div>
-
-	<div class="text-center pb-2">
-		<a target="_blank" href="{{event.urlLink}}">
-			Topic link
-		</a>
-	</div>
-
-	<div class="">
-		<h5>Move to</h5>
-
-		{{#each event.actions as |actionName| }}
-      <div style="margin-bottom: 0.3rem; margin-top: 0.3rem;">
-      	<button {{action "eventsAdminButtonClick" actionName}} type="button" class="events-admin-button">
-				{{actionName}}
-			</button>
-      </div>
-		{{/each}}
+	<!-- Show this when loading is false -->
+	<!-- Visibility hidden -->
 	
+	<div class="py-1">
+
+		<!-- title -->
+		<div class="text-center">
+			<h4>
+				{{event.title}}
+			</h4>
+	  </div>
+
+	  <!-- Category -->
+	  <div class="text-center">
+	  	<h5>
+	  		{{event.category}}
+	  	</h5>
+		</div>
+
+		<!-- Time -->
+		<div class="text-center pt-1">
+		 {{event.startTime}} - {{event.endTime}}
+		</div>
+
+		<!-- Link -->
+		<div class="text-center">
+			<a target="_blank" href="{{event.urlLink}}">
+				Topic link
+			</a>
+		</div>
+
+		<!-- Lock / unlock  -->
+		<div class="text-center pt-1">
+			{{#if event.linked_closed}}
+				<div style="padding-bottom: 0.5rem;">
+					{{d-icon 'lock'}}
+				</div>
+		  	<button {{action "eventsAdminButtonOpenTopic" event}} type="button" class="events-admin-button button-success">
+						open
+				</button>
+			{{ else }}
+				<div style="padding-bottom: 0.5rem;">
+					{{d-icon 'lock-open'}}
+				</div>
+		  	<button {{action "eventsAdminButtonCloseTopic" event}} type="button" class="events-admin-button button-danger">
+						close
+				</button>
+			{{/if}}
+		</div>
+
+
+		<div class="pt-1">
+			<h5>Move to</h5>
+
+			{{#each event.actions as |actionName| }}
+	      <div style="margin-bottom: 0.3rem; margin-top: 0.3rem;">
+	      	<button {{action "eventsAdminButtonClick" actionName}} type="button" class="events-admin-button">
+						{{actionName}}
+					</button>
+	      </div>
+			{{/each}}
+		
+		</div>
 	</div>
+
+
+	<!-- Show this when loading is true -->
+	{{#if event.loading}}
+		<div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: white; z-index: 1;">
+			
+			
+				<div class="text-center" style="position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; font-size: 3rem;">
+					<div class="spin-spin">
+						{{d-icon 'spinner'}}
+					</div>
+				</div>
+		</div>
+	{{/if}}
 	
 </div>
 

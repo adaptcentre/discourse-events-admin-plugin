@@ -18,9 +18,11 @@ register_asset "javascripts/third-party/async-2.6.2.min.js"
 #register_asset "javascripts/third-party/countdown-2.6.0.min.js"
 #register_asset "javascripts/third-party/moment-countdown.min.js"
 register_asset "stylesheets/gridlex.min.css"
+register_asset "stylesheets/animate.css"
 register_asset "stylesheets/main.scss"
 
 register_svg_icon "lock" if respond_to?(:register_svg_icon)
 register_svg_icon "lock-open" if respond_to?(:register_svg_icon)
 register_svg_icon "arrow-left" if respond_to?(:register_svg_icon)
 register_svg_icon "arrow-right" if respond_to?(:register_svg_icon)
+register_svg_icon "spinner" if respond_to?(:register_svg_icon)
