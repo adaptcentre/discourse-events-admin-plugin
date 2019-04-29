@@ -1,8 +1,13 @@
 export default Ember.Component.extend({
 	actions: {
 		eventsAdminButtonClick(actionName) {
-			//call the onConfirm property to invoke the parent component action
       this.get('onButtonClick')(actionName, this.event);
+		},
+		eventsAdminButtonOpenTopic() {
+			this.get('openTopic')(this.event.id);
+		},
+		eventsAdminButtonCloseTopic() {
+			this.get('closeTopic')(this.event.id);
 		}
 	}
 });

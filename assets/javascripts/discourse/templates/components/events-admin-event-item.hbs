@@ -42,14 +42,26 @@
 					{{d-icon 'lock'}}
 				</div>
 		  	<button {{action "eventsAdminButtonOpenTopic" event}} type="button" class="events-admin-button button-success">
-						open
+						{{#if event.closed_loading}}
+							<span class="spin-spin">
+								{{d-icon 'spinner'}}
+							</span>
+						{{else}}
+							open
+						{{/if}}
 				</button>
 			{{ else }}
 				<div style="padding-bottom: 0.5rem;">
 					{{d-icon 'lock-open'}}
 				</div>
 		  	<button {{action "eventsAdminButtonCloseTopic" event}} type="button" class="events-admin-button button-danger">
-						close
+						{{#if event.closed_loading}}
+							<span class="spin-spin">
+								{{d-icon 'spinner'}}
+							</span>
+						{{else}}
+							close
+						{{/if}}
 				</button>
 			{{/if}}
 		</div>

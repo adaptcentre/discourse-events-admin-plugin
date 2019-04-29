@@ -106,11 +106,13 @@ export default Ember.Component.extend({
 	    })
 	    .then( ( updatedEvents ) => {
 		  	
-		  	updatedEvents = updatedEvents.map( (el) => { el.loading = false; return el; } );
+		  	//need to do it like this instead of replacing whole array
+		  	for( let i = 0; i < updatedEvents.length; i++ ) {
 
-		  	this.set('allEvents', updatedEvents);
-
-		  	console.log('check if closed completed');
+		  		Ember.set(this.allEvents[i], 'linked_closed', updatedEvents[i].linked_closed );
+		  		Ember.set(this.allEvents[i], 'loading', false );
+		  		Ember.set(this.allEvents[i], 'closed_loading', false );
+		  	}
 		  });
 
 	  //start interval for clock
@@ -133,12 +135,12 @@ export default Ember.Component.extend({
 
   willDestroyElement() {
     //this._super();
-   	console.log('will destroy');
+   	
    	clearInterval( this.timeInterval  );
   },
 
   didDestroyElement() {
-  	console.log('did destroy');
+  	//console.log('did destroy');
   },
 
   actions: {
@@ -183,6 +185,36 @@ export default Ember.Component.extend({
   				Ember.set(event, 'category_id', parseInt(newCatId) );
   				Ember.set(event, 'loading', false );
   			}, 1000);
+  		});
+  	},
+  	openTopic(eventId) {
+  		let event = this.allEvents.find( (el) => {
+  			return parseInt(el.id) === parseInt(eventId);
+  		});
+
+  		Ember.set(event, 'closed_loading', true );
+
+  		openTopic( event.linked_id, this.queryEndpoint )
+  		.then( (data) => {
+  			console.log(data)
+
+  			Ember.set(event, 'closed_loading', false );
+  			Ember.set(event, 'linked_closed', false );
+  		});
+  	},
+  	closeTopic(eventId) {
+  		let event = this.allEvents.find( (el) => {
+  			return parseInt(el.id) === parseInt(eventId);
+  		});
+
+  		Ember.set(event, 'closed_loading', true );
+
+  		closeTopic( event.linked_id, this.queryEndpoint )
+  		.then( (data) => {
+  			console.log(data)
+
+  			Ember.set(event, 'closed_loading', false );
+  			Ember.set(event, 'linked_closed', true );
   		});
   	}
   }
@@ -337,6 +369,7 @@ function parseRawEvent( rawEvent ) {
   	category: category,
   	bg_col: bg_col,
   	linked_closed: null, //lets not assume anything and show a loading symbol untill we know more
+  	closed_loading: true,
   	linked_id: linked_id,
   	loading: true
   };
@@ -397,7 +430,66 @@ function updateTopic(topicId, data, endpoint) {
 		})
 		.then( response => response.json() )
 		.then( (data) => { 
-			resolve()
+			resolve(data)
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+	});
+
+	return p;
+}
+
+	
+function openTopic( topicId, endpoint ) {
+	
+	let req = {
+		'status': 'closed',
+		'enabled': 'false'
+	}
+	
+	let p = new Promise( (resolve, reject) => {
+
+		fetch(`/t/${topicId}/status${endpoint}`, {
+			method: 'PUT',
+			headers: {
+	        'Content-Type': 'application/json'
+	    },
+			body: JSON.stringify(req)
+		})
+		.then( response => response.json() )
+		.then( (data) => { 
+			resolve(data)
+		})
+		.catch( (err) => {
+			reject(err);
+		});
+
+	});
+
+	return p;
+}
+
+function closeTopic( topicId, endpoint ) {
+	
+	let req = {
+		'status': 'closed',
+		'enabled': 'true'
+	}
+
+	let p = new Promise( (resolve, reject) => {
+
+		fetch(`/t/${topicId}/status${endpoint}`, {
+			method: 'PUT',
+			headers: {
+	        'Content-Type': 'application/json'
+	    },
+			body: JSON.stringify(req)
+		})
+		.then( response => response.json() )
+		.then( (data) => { 
+			resolve(data)
 		})
 		.catch( (err) => {
 			reject(err);
