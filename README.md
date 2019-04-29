@@ -21,7 +21,7 @@ Development process:
 ---
 
 Commands:
- - rm -rf tmp; bundle exec rails s -> run dev version
+ - rm -rf tmp; bundle exec rails s -> run local dev version
 
 ---
 
