@@ -243,7 +243,7 @@ function resolveCategory(id, endpoint) {
 	        if( title.startsWith('About the') || isClosed ) {
 	          continue;
 	        }
-
+	        console.log('creating task for topic:', topic.id)
 	        let task = createTask( topic.id, endpoint);
 	        asyncTasks.push(task);
 	      }
@@ -280,6 +280,8 @@ function resolveCategory(id, endpoint) {
 function createTask(id, endpoint) {
 
 	return function(callback) {
+		console.log('fetching topic:', id);
+
 		fetch(`/t/${id}.json${endpoint}`)
     .then( (res) => {
       return res.json()
@@ -385,8 +387,8 @@ function checkIfTopicsAreClosed(events, queryEndpoint) {
   let tasks = [];
 
   let q = async.queue( (task, callback) => {
-	 
-		fetch(`/t/${task.linked_id}.json${queryEndpoint}`)
+	 	console.log('fetching linked topic', task.linked_id, 'for', task.id);
+		fetch(`/t/${task.linked_id}.json`) //dont need admin api key here
 	    .then( (res) => {
 	 			
 	    	if(res.ok) {
