@@ -99,6 +99,7 @@ export default Ember.Component.extend({
 	    		return res;
 	    	});
 
+	    	list.sort( (a,b) => { return a.order - b.order; });
 	    	
 	    	this.set('allEvents', this.allEvents.concat(list) );
 	    	//now we need to check if the events aka topics are closed or open
@@ -327,6 +328,7 @@ function parseRawEvent( rawEvent ) {
   let category = '';
   let bg_col = '';
   let linked_id = '';
+  let order = 0;
 
   let body = rawEvent.post_stream.posts[0].cooked;
   let lines = body.split('<br>');
@@ -358,6 +360,10 @@ function parseRawEvent( rawEvent ) {
     if (line.startsWith('Cat-bg==') || line.startsWith('Cat-bg==')) {
       bg_col = line.split('==')[1].trim();
     }
+
+    if (line.startsWith('Order==') || line.startsWith('order==')) {
+      order = parseInt( line.split('==')[1].trim() );
+    }
   });
 
 
@@ -374,12 +380,9 @@ function parseRawEvent( rawEvent ) {
   	linked_closed: null, //lets not assume anything and show a loading symbol untill we know more
   	closed_loading: true,
   	linked_id: linked_id,
-  	loading: true
+  	loading: true,
+  	order: order
   };
-
-  console.log(rawEvent)
-  console.log(parsed)
-
 
 	return parsed;
 }
