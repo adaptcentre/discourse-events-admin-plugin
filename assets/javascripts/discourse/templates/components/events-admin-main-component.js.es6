@@ -363,6 +363,7 @@ function parseRawEvent( rawEvent ) {
 
   let parsed = {
   	id: rawEvent.id,
+  	url: '/t/' + rawEvent.id,
   	category_id: rawEvent.category_id,
   	title: title,
   	startTime: startTime,
@@ -375,6 +376,9 @@ function parseRawEvent( rawEvent ) {
   	linked_id: linked_id,
   	loading: true
   };
+
+  console.log(rawEvent)
+  console.log(parsed)
 
 
 	return parsed;
