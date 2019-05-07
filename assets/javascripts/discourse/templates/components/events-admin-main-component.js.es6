@@ -100,7 +100,7 @@ export default Ember.Component.extend({
 	    	});
 
 	    	list.sort( (a,b) => { return a.order - b.order; });
-	    	
+	    	console.log(list)
 	    	this.set('allEvents', this.allEvents.concat(list) );
 	    	//now we need to check if the events aka topics are closed or open
 	    	return checkIfTopicsAreClosed( JSON.stringify( this.allEvents ), this.queryEndpoint );
