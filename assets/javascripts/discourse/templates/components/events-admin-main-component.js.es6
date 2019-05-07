@@ -16,25 +16,25 @@ export default Ember.Component.extend({
   	Ember.defineProperty( this, 'bucketList', Ember.computed( 'allEvents.@each.category_id', () => {
   		return this.allEvents.filter( (event) => {
   			return parseInt(event.category_id) === parseInt(this.catIds['bucket']);
-  		});
+  		}).sort( (a,b) => { return a.order - b.order; });
   	}));
 
   	Ember.defineProperty( this, 'comingUpList', Ember.computed( 'allEvents.@each.category_id', () => {
   		return this.allEvents.filter( (event) => {
   			return parseInt(event.category_id) === parseInt(this.catIds['comingUp']);
-  		});
+  		}).sort( (a,b) => { return a.order - b.order; });
   	}));
 
   	Ember.defineProperty( this, 'nowOnList',Ember.computed( 'allEvents.@each.category_id', () => {
   		return this.allEvents.filter( (event) => {
   			return parseInt(event.category_id) === parseInt(this.catIds['nowOn']);
-  		});
+  		}).sort( (a,b) => { return a.order - b.order; });
   	}));
 
   	Ember.defineProperty( this, 'finishedList', Ember.computed( 'allEvents.@each.category_id', () => {
   		return this.allEvents.filter( (event) => {
   			return parseInt(event.category_id) === parseInt(this.catIds['finished']);
-  		});
+  		}).sort( (a,b) => { return a.order - b.order; });
   	}));
 
   	let apiKey = this.siteSettings.events_admin_plugin_api_key;
@@ -99,8 +99,6 @@ export default Ember.Component.extend({
 	    		return res;
 	    	});
 
-	    	list.sort( (a,b) => { return a.order - b.order; });
-	    	console.log(list)
 	    	this.set('allEvents', this.allEvents.concat(list) );
 	    	//now we need to check if the events aka topics are closed or open
 	    	return checkIfTopicsAreClosed( JSON.stringify( this.allEvents ), this.queryEndpoint );
