@@ -14,9 +14,6 @@ enabled_site_setting :events_admin_plugin_enabled
 
 
 register_asset "javascripts/third-party/async-2.6.2.min.js"
-#register_asset "javascripts/third-party/moment-2.24.0.min.js"
-#register_asset "javascripts/third-party/countdown-2.6.0.min.js"
-#register_asset "javascripts/third-party/moment-countdown.min.js"
 register_asset "stylesheets/gridlex.min.css"
 register_asset "stylesheets/animate.css"
 register_asset "stylesheets/main.scss"
